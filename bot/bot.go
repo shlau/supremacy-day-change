@@ -47,17 +47,15 @@ func waitForStartTime(discord *discordgo.Session, channelID string, frequency ti
 			fmt.Println("Done!")
 			return
 		case <-time.After(diff):
-			startAlert(discord, channelID, frequency, startTimestamp, message)
+			startAlert(discord, channelID, frequency, message)
 			return
 		}
 	}
 }
 
-func startAlert(discord *discordgo.Session, channelID string, frequency time.Duration, startTimestamp time.Time, message string) {
+func startAlert(discord *discordgo.Session, channelID string, frequency time.Duration, message string) {
 	role := fmt.Sprintf("<@&%s>", "1260019771882082334")
 	alert := fmt.Sprintf("Attention %s, %s", role, message)
-	diff := time.Until(startTimestamp)
-	time.Sleep(diff)
 	ticker := time.NewTicker(frequency)
 	defer ticker.Stop()
 	for {
