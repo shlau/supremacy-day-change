@@ -40,6 +40,9 @@ func Run() {
 }
 
 func waitForStartTime(discord *discordgo.Session, channelID string, frequency time.Duration, startTimestamp time.Time, message string) {
+	discord.ChannelMessageSend(channelID, fmt.Sprintf("Your alerts will be sent starting at %s", startTimestamp.String()))
+	role := fmt.Sprintf("<@&%s>", "1260019771882082334")
+	alert := fmt.Sprintf("Attention %s, %s", role, message)
 	diff := time.Until(startTimestamp)
 	for {
 		select {
@@ -47,15 +50,15 @@ func waitForStartTime(discord *discordgo.Session, channelID string, frequency ti
 			fmt.Println("Done!")
 			return
 		case <-time.After(diff):
-			startAlert(discord, channelID, frequency, message)
+			fmt.Println("Starting Alert!")
+			discord.ChannelMessageSend(channelID, alert)
+			startAlert(discord, channelID, frequency, alert)
 			return
 		}
 	}
 }
 
-func startAlert(discord *discordgo.Session, channelID string, frequency time.Duration, message string) {
-	role := fmt.Sprintf("<@&%s>", "1260019771882082334")
-	alert := fmt.Sprintf("Attention %s, %s", role, message)
+func startAlert(discord *discordgo.Session, channelID string, frequency time.Duration, alert string) {
 	ticker := time.NewTicker(frequency)
 	defer ticker.Stop()
 	for {
@@ -87,7 +90,7 @@ func handleStartAlertRequest(discord *discordgo.Session, message *discordgo.Mess
 		fmt.Println("setting alert")
 		waitForStartTime(discord, message.ChannelID, frequency, time.Unix(timestamp, 0), inputs[3])
 	} else {
-		discord.ChannelMessageSend(message.ChannelID, "Invalid format. Please set alert with format ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1260006791375224943:hello```")
+		discord.ChannelMessageSend(message.ChannelID, "Invalid format. Please set alert with format ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1720571910:hello```")
 	}
 }
 
@@ -101,9 +104,9 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 		handleStartAlertRequest(discord, message)
 	case strings.Contains(message.Content, "!stopAlert"):
 		Done <- true
-		discord.ChannelMessageSend(message.ChannelID, "Done")
+		discord.ChannelMessageSend(message.ChannelID, "Alerts have been stopped.")
 	case strings.Contains(message.Content, "!alertHelp"):
-		discord.ChannelMessageSend(message.ChannelID, "You can set a recurring alert with ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1260006791375224943:hello```")
+		discord.ChannelMessageSend(message.ChannelID, "You can set a recurring alert with ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1720571910:hello```")
 		discord.ChannelMessageSend(message.ChannelID, "To stop all alerts, use ```!stopAlert```")
 	}
 
