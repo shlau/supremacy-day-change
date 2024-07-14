@@ -41,9 +41,14 @@ func Run() {
 
 func waitForStartTime(discord *discordgo.Session, channelID string, frequency time.Duration, startTimestamp time.Time, message string) {
 	discord.ChannelMessageSend(channelID, fmt.Sprintf("Your alerts will be sent starting at %s", startTimestamp.String()))
-	role := fmt.Sprintf("<@&%s>", "1260019771882082334")
+	role := fmt.Sprintf("<@&%s>", "1251221532014022666")
 	alert := fmt.Sprintf("Attention %s, %s", role, message)
 	diff := time.Until(startTimestamp)
+	if diff < 0 {
+		discord.ChannelMessageSend(channelID, "Your start time has already passed. Please use a future start time.")
+		return
+	}
+
 	for {
 		select {
 		case <-Done:
