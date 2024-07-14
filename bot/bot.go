@@ -90,24 +90,25 @@ func handleStartAlertRequest(discord *discordgo.Session, message *discordgo.Mess
 		fmt.Println("setting alert")
 		waitForStartTime(discord, message.ChannelID, frequency, time.Unix(timestamp, 0), inputs[3])
 	} else {
-		discord.ChannelMessageSend(message.ChannelID, "Invalid format. Please set alert with format ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1720571910:hello```")
+		discord.ChannelMessageSend(message.ChannelID, "Invalid format. Please set alert with format ```/setAlert:frequency:startTimestamp:message```\n For example, ```/setAlert:8h:1720571910:hello```")
 	}
 }
 
 func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
+	fmt.Println(message.Content)
 	if message.Author.ID == discord.State.User.ID {
 		return
 	}
 
 	switch {
-	case strings.Contains(message.Content, "!setAlert"):
+	case strings.Contains(message.Content, "/setAlert"):
 		handleStartAlertRequest(discord, message)
-	case strings.Contains(message.Content, "!stopAlert"):
+	case strings.Contains(message.Content, "/stopAlert"):
 		Done <- true
 		discord.ChannelMessageSend(message.ChannelID, "Alerts have been stopped.")
-	case strings.Contains(message.Content, "!alertHelp"):
-		discord.ChannelMessageSend(message.ChannelID, "You can set a recurring alert with ```!setAlert:frequency:startTimestamp:message```\n For example, ```!setAlert:8h:1720571910:hello```")
-		discord.ChannelMessageSend(message.ChannelID, "To stop all alerts, use ```!stopAlert```")
+	case strings.Contains(message.Content, "/alertHelp"):
+		discord.ChannelMessageSend(message.ChannelID, "You can set a recurring alert with ```/setAlert:frequency:startTimestamp:message```\n For example, ```/setAlert:8h:1720571910:hello```")
+		discord.ChannelMessageSend(message.ChannelID, "To stop all alerts, use ```/stopAlert```")
 	}
 
 }
