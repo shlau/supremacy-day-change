@@ -74,7 +74,7 @@ func startAlert(discord *discordgo.Session, channelID string, frequency time.Dur
 }
 
 func handleStartAlertRequest(discord *discordgo.Session, message *discordgo.MessageCreate) {
-	var re = regexp.MustCompile(`(?m)^\!setAlert:\d+["h","m","s"]:\d+:\w+`)
+	var re = regexp.MustCompile(`(?m)^\/setAlert:\d+["h","m","s"]:\d+:\w+`)
 	matched := re.Match([]byte(message.Content))
 	if matched {
 		inputs := strings.Split(message.Content, ":")
