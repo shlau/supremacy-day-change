@@ -95,10 +95,10 @@ func handleStartAlertRequest(discord *discordgo.Session, message *discordgo.Mess
 }
 
 func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
-	fmt.Println(message.Content)
 	if message.Author.ID == discord.State.User.ID {
 		return
 	}
+	fmt.Println(message.Content)
 
 	switch {
 	case strings.Contains(message.Content, "/setAlert"):
