@@ -41,7 +41,7 @@ func Run() {
 
 func waitForStartTime(discord *discordgo.Session, channelID string, frequency time.Duration, startTimestamp time.Time, message string) {
 	discord.ChannelMessageSend(channelID, fmt.Sprintf("Your alerts will be sent starting at %s", startTimestamp.String()))
-	role := fmt.Sprintf("<@&%s>", "1251221532014022666")
+	role := fmt.Sprintf("<@&%s>", os.Getenv("ROLE"))
 	alert := fmt.Sprintf("Attention %s, %s", role, message)
 	diff := time.Until(startTimestamp)
 	if diff < 0 {
