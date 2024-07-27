@@ -18,7 +18,7 @@ var Done chan bool
 
 func checkNilErr(e error) {
 	if e != nil {
-		log.Fatal("Error message")
+		log.Fatal("unable to create new bot instance")
 	}
 }
 
@@ -31,7 +31,7 @@ func Run() {
 	discord.Open()
 	defer discord.Close()
 
-	// keep bot running untill there is NO os interruption (ctrl + C)
+	// keep bot running until there is NO os interruption (ctrl + C)
 	fmt.Println("Bot running....")
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -86,11 +86,13 @@ func handleStartAlertRequest(discord *discordgo.Session, message *discordgo.Mess
 		frequency, err := time.ParseDuration(inputs[1])
 		if err != nil {
 			discord.ChannelMessageSend(message.ChannelID, "Invalid frequency format. Please use units h,m,s. For example, 8h")
+			return
 		}
 
 		timestamp, err := strconv.ParseInt(inputs[2], 10, 64)
 		if err != nil {
 			discord.ChannelMessageSend(message.ChannelID, "Invalid timestamp. Please use a unix timestamp for your alert start time.")
+			return
 		}
 		fmt.Println("setting alert")
 		waitForStartTime(discord, message.ChannelID, frequency, time.Unix(timestamp, 0), inputs[3])
